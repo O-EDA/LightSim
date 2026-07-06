@@ -1,0 +1,322 @@
+# Configuration File
+layout:
+  mzi_coordinates_size: 1 # Clements 坐标缩放因子，用于 get_stacked_coordinates 的 size 参数
+
+### device
+mrr_weight:
+  bit: 2
+  area: 2.5e-11
+  power: 1.2799e-6 # 0.0000012799 W
+
+mrr_input:
+  area: 2.5e-11
+  power: 1.28125e-6 # 0.00000128125 W 
+
+PD:
+  area: 1.40625e-11
+  power: 6.4e-5 # 0.000064 W
+
+ADC:
+  area: 1.2e-9
+  power: 0.002
+
+DAC:
+  area: 3.90625e-13
+  power: 0.0000078125
+
+SamHold:
+  area: 3.91e-14
+  power: 0.000025
+
+mux_split:
+  area: 5.015625e-9
+  power: 0
+
+IOinterface:
+  area: 2.44e-8 # m^2
+  power: 0.14018 # W
+  bit_per_s: 6.4e+10 # bit/s
+  links: 4
+
+noc:
+  area_router: 3.775e-8
+  power_router: 0.042
+  router_pipeline_cycles: 3
+  link_delay_cycles: 1
+  flit_width_bits: 32
+
+wire:
+  prevent_overflow: false
+
+
+########## ADEPT
+
+
+inputDAC:
+  precision: 10
+  power: 11.06e-3 #11.06mW
+  area: 0.1e-6 # 0.1mm2 
+
+
+outputADC:
+  precision: 8
+  sampling_rate: 5.0e+9 # 5GS/s
+  power: 29.0e-3 # 28mW
+  area: 102600.0e-12 #  
+
+
+weightDAC: 
+  precision: 12
+  power: 44.25e-3 # 44.25mW
+  sampling_rate: 10.0e+9 # 10GS/s
+  area: 0.1e-6 # 0.1mm2 
+
+
+MZI:
+  PS_num: 1
+  programming_latency: 10.0e-9 # 10ns
+  PS_area: 3750.0e-12
+  power: 0
+
+TOMZI:
+  thermal_avg_power: 10.0e-3 # 10mW
+
+laser: 
+  efficiency: 0.2
+  peak_power: 30.0e-3 
+  area: 120000.0e-12
+
+modulator:
+  precision: 10
+  energy: 20.0e-15 
+  area: 2500.0e-12 
+  width: 250e-6 
+  height: 10e-6 
+
+detector:
+  energy: 297.0e-15 # 297fJ/bit
+  efficiency: 0.8 
+  area: 60.0e-12 
+  width: 3e-6 # 3um
+  height: 20e-6 # 20um  
+
+
+PTC_type: "MZI"
+
+
+#####
+
+
+businput:
+  width: 128
+
+busoutput:
+  width: 128
+
+
+###########################################
+
+
+photonic_loss:
+  laser_eff: 0.2 # 20%
+  coupler_loss_db: 2 # 2 dB
+  modulator_loss_db: 1.2 # 1.2 dB
+  mzi_loss_db: 0.04 # 0.04 dB
+  pd_eff: 0.8 # 80%
+
+  propogation_loss_db: 0.02 # 2db/cm 
+  mzi_length:  300e-6 # 300um
+  
+  laser2coupler_d: 0
+  coupler2modulator_d: 150e-6 # 150um
+  modulator2mzi_d: 150e-6 # 150um
+  mzi2pd_d: 30e-6 # 30 μm
+
+
+
+
+
+model:
+  type: 'cnn'
+  batch_size: 1 
+
+
+GHtree:
+  # bitwidth: 4096
+  bitwidth: 4096
+
+
+# 体系结构参数
+arch:
+  # SubArray dimensions
+  num_row_sa: 16
+  num_col_sa: 16
+  # PE dimensions
+  num_row_pe: 2
+  num_col_pe: 2
+  # pe_input_buffer_bit: 18000 # bit
+  # pe_output_buffer_bit: 18000 # bit
+  pe_input_buffer_bit: 104857 # bit
+  pe_output_buffer_bit: 104857 # bit
+
+  # Tile dimensions
+  num_row_tile: 1
+  num_col_tile: 1
+  tile_input_buffer_bit: 104857 # bit
+  tile_output_buffer_bit: 104857 # bit
+  tile_input_buffer_sram: true
+  tile_output_buffer_sram: true
+
+  # System dimensions
+  num_row_sys: 2
+  num_col_sys: 2
+  global_buffer_bit: 1048576 # bit
+  gobal_buffer_sram: true
+
+
+
+weight_bit_each_device: 10 
+
+precision:
+  num_bit_input: 12
+  num_bit_weight: 10
+  num_bit_output: 8
+
+mapping:
+  weight_mapping: "Sign"
+  sign_mapping: "NPsplit"
+  mapping_setting: "fixed"  # "max", "all", "fixed"
+
+
+
+hardware:
+  # Clock and temperature
+  clk_freq: 10.0e+9  # 10GHz
+  temp: 300  # Kelvin
+  tech_node: 32  # nm
+  # Multiplexing and output levels
+  num_col_muxed: 8
+  level_output: 256
+  consider_write_movement_budget: false
+
+
+photonic:
+  # Photonic specific settings
+  weigh_dac_num: 10
+
+
+
+
+options:
+  
+  # Output options
+  print_layer_to_csv: true
+  print_network_to_csv: true
+  
+  # Debug print options
+  print_area_pe: false
+  print_area_tile: false
+  print_area_layer: false
+
+
+
+################ dataflow control #################
+# 组件启用控制 - 控制哪些组件参与面积/能耗/延迟计算
+enable_components:
+  area:
+    # SA level
+    # MZI: true
+    # modulator: true
+    # PD: true
+    PIC: true
+    inputDAC: true
+    outputADC: true
+    weightDAC: true
+    # PE level 
+    PE_buffer_input: true
+    PE_buffer_output: true
+    PE_adder: true
+    PE_bus_input: true
+    PE_bus_output: true
+    # Tile level (masked)
+    # Tile_adder: true
+    # Tile_ic: true
+    # Tile_buffer_input: true
+    # Tile_buffer_output: true
+    Tile_adder: false
+    Tile_ic: false
+    Tile_buffer_input: false
+    Tile_buffer_output: false
+    # Network level
+    network_ic: true
+    global_buffer: true
+  
+  energy:
+    # SA level
+    inputDAC: true
+    outputADC: true
+    detector: true
+    modulator: true
+    weightDAC: true
+    MZI_inference: true
+    weight_programming: true
+    MVM: true
+    # PE level 
+    PE_buffer_input: true
+    PE_buffer_output: true
+    PE_adder: true
+    PE_ic_input: true
+    PE_ic_output: true
+    PE_write: true
+    # Tile level (masked)
+    # Tile_adder: true
+    # Tile_buffer_input: true
+    # Tile_buffer_output: true
+    # Tile_ic_output: true
+    # Tile_ic_input: true
+    # Tile_write: true
+    Tile_adder: false
+    Tile_buffer_input: false
+    Tile_buffer_output: false
+    Tile_ic_output: false
+    Tile_ic_input: false
+    Tile_write: false
+    # Network level
+    laser: true
+    network_ic_output: true
+    network_ic_input: true
+    global_buffer_input: true
+    global_buffer_output: true
+
+  latency:
+    # SA level
+    MVM: true
+    weight_programming: true
+    # PE level
+    PE_buffer_input: true
+    PE_buffer_output: true
+    PE_adder: true
+    PE_ic_input: true
+    PE_ic_output: true
+    PE_write: true
+    # Tile level (masked)
+    # Tile_adder: true
+    # Tile_buffer_input: true
+    # Tile_buffer_output: true
+    # Tile_ic_output: true
+    # Tile_ic_input: true
+    # Tile_write: true
+    Tile_adder: false
+    Tile_buffer_input: false
+    Tile_buffer_output: false
+    Tile_ic_output: false
+    Tile_ic_input: false
+    Tile_write: false
+    # Network level
+    network_ic_output: true
+    network_ic_input: true
+    global_buffer_input: true
+    global_buffer_output: true
+
+
+
